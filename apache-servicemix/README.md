@@ -14,8 +14,9 @@ runs ServiceMix in a **headless** OpenJDK 8 JRE.
 
 At the file system level, the ServiceMix installation is essentially
 just an [Apache Karaf](https://karaf.apache.org/) installation, but with
-a number of additional components "preloaded" (including an embdded
-[ActiveMQ](http://activemq.apache.org/) 5.14.5 broker).
+a number of additional components "preloaded" (including [Apache Camel](
+http://camel.apache.org/) and an embdded [ActiveMQ](
+http://activemq.apache.org/) broker).
 
 This image re-defines the ``KARAF_DATA`` and ``KARAF_ETC`` locations
 so that they reside under */var/opt/apache-servicemix/instance* (and
