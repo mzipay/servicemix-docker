@@ -1,0 +1,5 @@
+export JAVA_HOME="/etc/alternatives/jre_1.8.0_openjdk"
+export KARAF_DATA="/var/opt/red-hat-fuse/instance/data"
+export KARAF_ETC="/var/opt/red-hat-fuse/instance/etc"
+export KARAF_NOROOT="true"
+
