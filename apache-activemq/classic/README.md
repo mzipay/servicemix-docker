@@ -9,14 +9,15 @@ HOST LOOPBACK ADDRESS. DEVIATE FROM THIS AT YOUR OWN PERIL!*
 
 ------------------------------------------------------------------------
 
-This image is based on *centos:7* and runs ActiveMQ in a **headless**
-OpenJDK 8 JRE.
+This image is based on [centos:7](https://hub.docker.com/_/centos) and
+runs ActiveMQ in a **headless** OpenJDK 8 JRE.
 
-Unlike the Artemis and Apollo subprojects, there is no file system-level
-distinction between the **installation** and the broker **instance**
-with classic ActiveMQ. However, the *bin/env* script does contain
-options that can effectively duplicate such a separation. This image
-takes advantage of those options to define an ``ACTIVEMQ_INST``
+Unlike the [Artemis](https://activemq.apache.org/artemis/) and [Apollo](
+https://activemq.apache.org/apollo/) subprojects, there is no file
+system-level distinction between the **installation** and the broker
+**instance** with classic ActiveMQ. However, the *bin/env* script does
+contain options that can effectively duplicate such a separation. This
+image takes advantage of those options to define an ``ACTIVEMQ_INST``
 environment variable pointing to */var/opt/apache-activemq/instance*,
 and to re-define the ``ACTIVEMQ_CONF``, ``ACTIVEMQ_DATA`` and
 ``ACTIVEMQ_TMP`` environment variables in terms of ``ACTIVEMQ_INST``.

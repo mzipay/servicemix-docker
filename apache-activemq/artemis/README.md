@@ -9,8 +9,9 @@ HOST LOOPBACK ADDRESS. DEVIATE FROM THIS AT YOUR OWN PERIL!*
 
 ------------------------------------------------------------------------
 
-This image is based on *openjdk:11-jre-slim-stretch* from
-docker-library/openjdk.
+This image is based on [openjdk:11-jre-slim-stretch](
+https://hub.docker.com/_/openjdk) from [docker-library/openjdk](
+https://github.com/docker-library/openjdk).
 
 The Artemis instance is located at */var/opt/apache-artemis/broker*,
 is owned by ``artemis:artemis``, and is configured by default to require

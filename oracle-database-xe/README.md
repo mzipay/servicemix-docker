@@ -9,12 +9,13 @@ HOST LOOPBACK ADDRESS. DEVIATE FROM THIS AT YOUR OWN PERIL!*
 
 ------------------------------------------------------------------------
 
-The official Oracle Database XE image is based on Oracle Linux 7 (slim).
+The official Oracle Database XE image is based on [Oracle Linux 7 (slim)](
+https://hub.docker.com/_/oraclelinux).
 
 ## Build the Oracle Database XE Docker image
 
-Start with the official Oracle Database XE image from
-oracle/docker-images:
+Start with the official Oracle Database XE image from [oracle/docker-images](
+https://github.com/oracle/docker-images):
 
 ```shell
 $ git clone https://github.com/oracle/docker-images.git
@@ -51,9 +52,9 @@ $ docker run --rm -it -e ORACLE_PWD=******** -e ORACLE_CHARACTERSET=AL32UTF8 -v 
 
 If database creation is successful, the following message is displayed:
 
-> #########################
-> DATABASE IS READY TO USE!
-> #########################
+> #########################  
+> DATABASE IS READY TO USE!  
+> #########################  
 
 __IMPORTANT!__
 
@@ -69,9 +70,9 @@ $ docker commit 0eaa614599d2 oracle-database-xe:18c
 
 ### Custom configuration
 
-The *setup/* directory contains shell scripts (\*.sh) and PL\*SQL
-scripts (\*.sql) that will be automatically executed following database
-creation. These scripts perform several useful (IMO) steps:
+The *setup/* directory contains shell scripts (_\*.sh_) and PL\*SQL
+scripts (_\*.sql_) that will be automatically executed following
+database creation. These scripts perform several useful (IMO) steps:
 
 + install the ``socat``, ``vim-minial`` and ``which`` packages
 + disable Oracle password expiration

@@ -9,12 +9,13 @@ HOST LOOPBACK ADDRESS. DEVIATE FROM THIS AT YOUR OWN PERIL!*
 
 ------------------------------------------------------------------------
 
-This image is based on *centos:7* and runs ServiceMix in a **headless**
-OpenJDK 8 JRE.
+This image is based on [centos:7](https://hub.docker.com/_/centos) and
+runs ServiceMix in a **headless** OpenJDK 8 JRE.
 
 At the file system level, the ServiceMix installation is essentially
-just an Apache Karaf installation, but with a number of additional
-components "preloaded" (including an embdded ActiveMQ 5.14.5 broker).
+just an [Apache Karaf](https://karaf.apache.org/) installation, but with
+a number of additional components "preloaded" (including an embdded
+[ActiveMQ](http://activemq.apache.org/) 5.14.5 broker).
 
 This image re-defines the ``KARAF_DATA`` and ``KARAF_ETC`` locations
 so that they reside under */var/opt/apache-servicemix/instance* (and

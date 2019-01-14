@@ -9,8 +9,9 @@ HOST LOOPBACK ADDRESS. DEVIATE FROM THIS AT YOUR OWN PERIL!*
 
 ------------------------------------------------------------------------
 
-This image is based on *openjdk:8-jre-alpine* from
-docker-library/openjdk.
+This image is based on [openjdk:8-jre-alpine](
+https://hub.docker.com/_/openjdk) from [docker-library/openjdk](
+https://github.com/docker-library/openjdk).
 
 The Apollo instance is located at */var/opt/apache-apollo/broker* and is
 owned by ``apollo:apollo``. The default account username/password is
