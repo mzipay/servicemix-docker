@@ -3,6 +3,7 @@
 *.sha*
 *.swp
 *.tar.gz
+*.tgz
 *.zip
 *KEYS*
 
