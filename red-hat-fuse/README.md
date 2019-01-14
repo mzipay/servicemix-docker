@@ -82,7 +82,7 @@ $ docker volume create red-hat-fuse-deploy
 ```
 
 Run the Fuse instance, daemonized, with the OSGi HTTP port, Karaf SSH
-port, and the embedded ActiveMQ connector port mapped to the loopback
+port, and the embedded AMQ connector port mapped to the loopback
 address:
 ```shell
 $ docker run --name red-hat-fuse --rm -dit -p 127.0.0.1:8181:8181 -p 127.0.0.1:8101:8101 -p 127.0.0.1:61616:61616 -v red-hat-fuse-instance:/var/opt/red-hat-fuse/instance -v red-hat-fuse-deploy:/opt/fuse-karaf-7.2.0.fuse-720035-redhat-00001/deploy red-hat-fuse:7.2.0
