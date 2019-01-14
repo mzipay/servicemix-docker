@@ -1,0 +1,10 @@
+
+export PS1="[\u@\h]\$ "
+
+export JAVA_HOME="$(/usr/local/bin/docker-java-home)"
+export BROKER_HOME="/var/opt/apache-artemis/broker"
+
+export PATH="${BROKER_HOME}/bin:${JAVA_HOME}/bin:${PATH}"
+
+cd
+

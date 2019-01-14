@@ -1,0 +1,8 @@
+*.asc
+*.bak
+*.sha*
+*.swp
+*.tar.gz
+*.zip
+*KEYS*
+

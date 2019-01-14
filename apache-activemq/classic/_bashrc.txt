@@ -1,0 +1,10 @@
+
+export PS1="[\u@\h]\$ "
+
+export JAVA_HOME="/etc/alternatives/jre_1.8.0_openjdk"
+export ACTIVEMQ_HOME="/opt/apache-activemq-5.15.8"
+
+export PATH="${ACTIVEMQ_HOME}/bin:${JAVA_HOME}/bin:${PATH}"
+
+cd
+
