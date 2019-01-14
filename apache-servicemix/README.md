@@ -83,6 +83,13 @@ Start a Bash shell as the ``servicemix`` user in a running container:
 $ docker exec -it apache-servicemix bash
 ```
 
+SSH into the Karaf shell from the host:
+```shell
+$ ssh admin@127.0.0.1 -p 8101 -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null"
+```
+*(Note: The "-o" options are needed because the host name changes every
+time a new container is started.)*
+
 Stop the ServiceMix container:
 ```shell
 $ docker attach apache-servicemix
