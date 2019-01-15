@@ -25,23 +25,17 @@ https://www.redhat.com/en/technologies/jboss-middleware/amq) broker,
 [Narayana](http://narayana.io/) transaction manager and [Undertow](
 http://undertow.io/) Web server).
 
-This image re-defines the ``KARAF_DATA`` and ``KARAF_ETC`` locations
-so that they reside under */var/opt/red-hat-fuse/instance* (and can
-therefore be persisted with a Docker volume). Additionally, the image
-defines */opt/fuse-karaf-7.2.0.fuse-720035-redhat-00001/deploy* as a
-volume.
+The Fuse installation is located at */opt/fuse*. Maven is installed at
+*/opt/maven*. Both installations are owned by ``fuse:fuse``, and Karaf
+is prohibited from running as ``root``.
 
-Both */var/opt/red-hat-fuse/instance* and
-*/opt/fuse-karaf-7.2.0.fuse-720035-redhat-00001* are owned by
-``fuse:fuse``, and the Karaf instance is explicitly prohibited to run
-as root.
+All Karaf data has been moved out of the installation directory and into
+*/var/opt/fuse* (which is defined as a Docker volume). The local Maven
+repository resides at */var/opt/fuse/local*.
 
 The default username and password is admin/admin. *(Note: this account
 left disabled by the default Fuse install, but __enabled__ in this
 image.)*
-
-The ``fuse`` account's *.bashrc* exports JAVA\_HOME and MAVEN\_HOME, and
-a PATH with the Maven and JRE executables prepended.
 
 ## Build the Red Hat Fuse Docker image
 
@@ -71,21 +65,14 @@ Before running the image for the first time, create a Docker *named
 volume* so that Karaf (and embedded AMQ broker) data and configuration
 are persisted between runs:
 ```shell
-$ docker volume create red-hat-fuse-instance
-```
-
-Additionally, create a Docker *named volume* for the Fuse *deploy/*
-directory so that OSGi bundles may be hot-deployed directly from the
-host:
-```shell
-$ docker volume create red-hat-fuse-deploy
+$ docker volume create red-hat-fuse-varopt
 ```
 
 Run the Fuse instance, daemonized, with the OSGi HTTP port, Karaf SSH
 port, and the embedded AMQ connector port mapped to the loopback
 address:
 ```shell
-$ docker run --name red-hat-fuse --rm -dit -p 127.0.0.1:8181:8181 -p 127.0.0.1:8101:8101 -p 127.0.0.1:61616:61616 -v red-hat-fuse-instance:/var/opt/red-hat-fuse/instance -v red-hat-fuse-deploy:/opt/fuse-karaf-7.2.0.fuse-720035-redhat-00001/deploy red-hat-fuse:7.2.0
+$ docker run --name red-hat-fuse --rm -dit -p 127.0.0.1:8181:8181 -p 127.0.0.1:8101:8101 -p 127.0.0.1:61616:61616 -v red-hat-fuse-varopt:/var/opt/fuse --mount type=tmpfs,destination=/tmp,tmpfs-mode=1777 red-hat-fuse:7.2.0
 ```
 
 Start a Bash shell as the ``fuse`` user in a running container:

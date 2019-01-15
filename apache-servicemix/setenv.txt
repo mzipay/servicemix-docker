@@ -1,5 +1,0 @@
-export JAVA_HOME="/etc/alternatives/jre_1.8.0_openjdk"
-export KARAF_DATA="/var/opt/apache-servicemix/instance/data"
-export KARAF_ETC="/var/opt/apache-servicemix/instance/etc"
-export KARAF_NOROOT="true"
-

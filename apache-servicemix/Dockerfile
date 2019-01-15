@@ -1,9 +1,4 @@
 FROM centos:7
-COPY apache-maven-3.6.0-bin.tar.gz \
-     apache-servicemix-7.0.1.zip \
-     _bashrc.txt \
-     setenv.txt \
-     /tmp/
 LABEL maintainer="Matthew Zipay <mattzATninthtestDOTinfo>"
 
 RUN yum -y update && yum -y upgrade && \
@@ -11,33 +6,64 @@ RUN yum -y update && yum -y upgrade && \
     rm -rf /var/cache/yum
 
 RUN groupadd -g 59999 servicemix && \
-    useradd -f -1 -g 59999 -m -u 59999 servicemix && \
-    cat /tmp/_bashrc.txt >> /home/servicemix/.bashrc && \
-    rm -f /tmp/_bashrc.txt
+    useradd -f -1 -g 59999 -m -u 59999 servicemix
 
-RUN mkdir -p /opt && \
-    cd /opt && \
-    tar zxf /tmp/apache-maven-3.6.0-bin.tar.gz && \
-    unzip /tmp/apache-servicemix-7.0.1.zip && \
-    cat /tmp/setenv.txt >> apache-servicemix-7.0.1/bin/setenv && \
-    mkdir -p /var/opt/apache-servicemix/instance && \
-    mv apache-servicemix-7.0.1/data /var/opt/apache-servicemix/instance/ && \
-    mv apache-servicemix-7.0.1/etc /var/opt/apache-servicemix/instance/ && \
-    chown -R servicemix:servicemix /opt/apache-servicemix-7.0.1 && \
-    chown -R servicemix:servicemix /var/opt/apache-servicemix/instance && \
-    rm -f /tmp/apache-* /tmp/setenv.txt
+COPY apache-servicemix-*.zip apache-maven-*.tar.gz /tmp/
+RUN cd /opt && \
+    unzip /tmp/apache-servicemix-*.zip && \
+    tar zxf /tmp/apache-maven-*.tar.gz && \
+    chmod -R g-w,o-rwxXst apache-servicemix-* apache-maven-* && \
+    chown -R servicemix:servicemix apache-servicemix-* apache-maven-* && \
+    ln -s apache-servicemix-* servicemix && \
+    ln -s apache-maven-* maven && \
+    rm -rf servicemix/data servicemix/deploy && \
+    mkdir -m 0750 /var/opt/servicemix && \
+    mkdir -m 0750 /var/opt/servicemix/data && \
+    mkdir -m 0770 /var/opt/servicemix/deploy && \
+    mkdir -m 0750 /var/opt/servicemix/local && \
+    mv servicemix/etc /var/opt/servicemix/ && \
+    sed -i.orig \
+        -e 's/\(karaf\.shutdown\.port\.file\)\s*=\s*.*\/\(.*\)/\1 = \/var\/opt\/servicemix\/\2/' \
+        -e 's/\(karaf\.pid\.file\)\s*=\s*.*\/\(.*\)/\1 = \/var\/opt\/servicemix\/\2/' \
+        /var/opt/servicemix/etc/config.properties && \
+    sed -i.orig \
+        's/\(felix\.fileinstall\.dir\)\s*=.*/\1 = \/var\/opt\/servicemix\/deploy/' \
+        /var/opt/servicemix/etc/org.apache.felix.fileinstall-deploy.cfg && \
+    sed -i.orig \
+        '/# karaf.lock.dir=/a karaf.lock.dir = \/var\/opt\/servicemix' \
+        /var/opt/servicemix/etc/system.properties && \
+    chmod 0440 /var/opt/servicemix/etc/*.orig && \
+    chown -R servicemix:servicemix /var/opt/servicemix && \
+    cp -R maven/conf /home/servicemix/.m2 && \
+    chown -R servicemix:servicemix /home/servicemix/.m2 && \
+    sed -i.orig '/<localRepository>\/path\/to\/local\/repo<\/localRepository>/,/\-\->/!b;/\-\->/a <localRepository>\/var\/opt\/servicemix\/local<\/localRepository>' /home/servicemix/.m2/settings.xml && \
+    chmod 0440 /home/servicemix/.m2/settings.xml.orig && \
+    rm -f /tmp/*.*
 
-VOLUME /var/opt/apache-servicemix/instance /opt/apache-servicemix-7.0.1/deploy
+COPY --chown=servicemix:servicemix docker-servicemix-entrypoint.sh /
+
+ENV PS1="[\u@\h:\w]\n\$ " \
+    EDITOR="vi" \
+    JAVA_HOME="/etc/alternatives/jre_1.8.0_openjdk" \
+    KARAF_HOME="/opt/servicemix" \
+    KARAF_DATA="/var/opt/servicemix/data" \
+    KARAF_ETC="/var/opt/servicemix/etc" \
+    KARAF_NOROOT="true" \
+    KARAF_OPTS="-Dkaraf.instances=/var/opt/servicemix/instances" \
+    MAVEN_HOME="/opt/maven" \
+    MAVEN_REPO="/var/opt/servicemix/local" \
+    PATH="$PATH:/etc/alternatives/jre_1.8.0_openjdk:/opt/maven/bin:/opt/servicemix/bin"
+
+VOLUME /var/opt/servicemix
 
 # 8181 = OSGi HTTP service
-# 8443 = OSGi HTTPS service
+# 8101 = Karaf shell (SSH)
 # 44444 = Karaf RMI server
 # 1099 = Karaf RMI registry
-# 8101 = Karaf shell (SSH)
 # 61616 = embedded ActiveMQ connector
-EXPOSE 8181 8443 44444 1099 8101 61616
+EXPOSE 8181 8101 44444 1099 61616
 
 USER servicemix
-WORKDIR /opt/apache-servicemix-7.0.1
-CMD ["bin/servicemix"]
+WORKDIR /var/opt/servicemix
+CMD ["/docker-servicemix-entrypoint.sh"]
 

@@ -18,20 +18,16 @@ a number of additional components "preloaded" (including [Apache Camel](
 http://camel.apache.org/) and an embdded [ActiveMQ](
 http://activemq.apache.org/) broker).
 
-This image re-defines the ``KARAF_DATA`` and ``KARAF_ETC`` locations
-so that they reside under */var/opt/apache-servicemix/instance* (and
-can therefore be persisted with a Docker volume). Additionally, the
-image defines */opt/apache-servicemix-7.0.1/deploy* as a volume.
+The ServiceMix installation is located at */opt/servicemix*. Maven is
+installed at */opt/maven*. Both installations are owned by
+``servicemix:servicemix``, and Karaf is prohibited from running as
+``root``.
 
-Both */var/opt/apache-servicemix/instance* and
-*/opt/apache-servicemix-7.0.1* are owned by ``servicemix:servicemix``,
-and the Karaf instance is explicitly prohibited to run as root.
+All Karaf data has been moved out of the installation directory and into
+*/var/opt/servicemix* (which is defined as a Docker volume). The local
+Maven repository resides at */var/opt/servicemix/local*.
 
-The default username and password for the Karaf shell is smx/smx.
-
-The ``servicemix`` account's *.bashrc* exports JAVA\_HOME and
-MAVEN\_HOME, and a PATH with the Maven and JRE executables
-prepended.
+The default username and password is smx/smx.
 
 ## Build the Apache ServiceMix Docker image
 
@@ -61,21 +57,14 @@ Before running the image for the first time, create a Docker *named
 volume* so that Karaf (and embedded ActiveMQ broker)  data and
 configuration are persisted between runs:
 ```shell
-$ docker volume create apache-servicemix-instance
-```
-
-Additionally, create a Docker *named volume* for the ServiceMix
-*deploy/* directory so that OSGi bundles may be hot-deployed directly
-from the host:
-```shell
-$ docker volume create apache-servicemix-deploy
+$ docker volume create apache-servicemix-varopt
 ```
 
 Run the ServiceMix instance, daemonized, with the OSGi HTTP port, Karaf
 SSH port, and the embedded ActiveMQ connector port mapped to the
 loopback address:
 ```shell
-$ docker run --name apache-servicemix --rm -dit -p 127.0.0.1:8181:8181 -p 127.0.0.1:8101:8101 -p 127.0.0.1:61616:61616 -v apache-servicemix-instance:/var/opt/apache-servicemix/instance -v apache-servicemix-deploy:/opt/apache-servicemix-7.0.1/deploy apache-servicemix:7.0.1
+$ docker run --name apache-servicemix --rm -dit -p 127.0.0.1:8181:8181 -p 127.0.0.1:8101:8101 -p 127.0.0.1:61616:61616 -v apache-servicemix-varopt:/var/opt/servicemix --mount type=tmpfs,destination=/tmp,tmpfs-mode=1777 apache-servicemix:7.0.1
 ```
 
 Start a Bash shell as the ``servicemix`` user in a running container:

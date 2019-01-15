@@ -55,7 +55,11 @@ ENV PS1="[\u@\h:\w]\n\$ " \
 
 VOLUME /var/opt/karaf
 
-EXPOSE 8181 8101 1099 44444
+# 8181 = OSGi HTTP service
+# 8101 = Karaf shell (SSH)
+# 44444 = Karaf RMI server
+# 1099 = Karaf RMI registry
+EXPOSE 8181 8101 44444 1099
 
 USER karaf
 WORKDIR /var/opt/karaf

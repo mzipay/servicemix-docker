@@ -18,23 +18,10 @@ The Karaf installation is located at */opt/karaf*. Maven is installed at
 is prohibited from running as ``root``.
 
 All Karaf data has been moved out of the installation directory and into
-*/var/opt/karaf* (which is defined as a Docker volume).
+*/var/opt/karaf* (which is defined as a Docker volume). The local Maven
+repository resides at */var/opt/karaf/local*.
 
-Tip: Add a group with GID 59999 to your host, and add yourself to that
-group. You are now able to drop OSGi bundles directly into
-*/var/lib/docker/volumes/apache-karaf-varopt/_data/deploy* to hot-deploy
-them.
-
-The image defines the following environment variables for Karaf and
-Maven:
-
-* KARAF\_HOME
-* KARAF\_DATA
-* KARAF\_ETC
-* KARAF\_NOROOT
-* KARAF\_OPTS
-* MAVEN\_HOME
-* MAVEN\_REPO
+The default username and password is karaf/karaf.
 
 ## Build the Apache Karaf Docker image
 
