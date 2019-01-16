@@ -52,7 +52,7 @@ ENV PS1="[\u@\h:\w]\n\$ " \
     KARAF_OPTS="-Dkaraf.instances=/var/opt/servicemix/instances" \
     MAVEN_HOME="/opt/maven" \
     MAVEN_REPO="/var/opt/servicemix/local" \
-    PATH="$PATH:/etc/alternatives/jre_1.8.0_openjdk:/opt/maven/bin:/opt/servicemix/bin"
+    PATH="$PATH:/etc/alternatives/jre_1.8.0_openjdk/bin:/opt/maven/bin:/opt/servicemix/bin"
 
 VOLUME /var/opt/servicemix
 
