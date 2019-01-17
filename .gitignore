@@ -1,5 +1,6 @@
 *.asc
 *.bak
+*.jar
 *.sha*
 *.swp
 *.tar.gz
