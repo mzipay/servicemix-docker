@@ -8,21 +8,21 @@ RUN yum -y update && yum -y upgrade && \
 RUN groupadd -g 59999 fuse && \
     useradd -f -1 -g 59999 -m -u 59999 fuse
 
-COPY fuse-*.zip apache-maven-*.tar.gz /tmp/
+COPY fuse-*.zip /tmp/
 RUN cd /opt && \
     unzip /tmp/fuse-*.zip && \
-    tar zxf /tmp/apache-maven-*.tar.gz && \
-    chmod -R g-w,o-rwxXst fuse-* apache-maven-* && \
-    chown -R fuse:fuse fuse-* apache-maven-* && \
+    chmod -R g-w,o-rwxXst fuse-* && \
+    chown -R fuse:fuse fuse-* && \
     ln -s fuse-* fuse && \
-    ln -s apache-maven-* maven && \
     chmod -x fuse/bin/contrib/*.* && \
     chmod ug+x fuse/bin/contrib/*.sh fuse/bin/contrib/*.init* && \
     rm -rf fuse/data fuse/deploy && \
     mkdir -m 0750 /var/opt/fuse && \
+    mkdir -m 0750 /var/opt/fuse/bin && \
     mkdir -m 0750 /var/opt/fuse/data && \
     mkdir -m 0770 /var/opt/fuse/deploy && \
-    mkdir -m 0750 /var/opt/fuse/local && \
+    cp fuse/bin/setenv /var/opt/fuse/bin/ && \
+    echo -e '#!/bin/sh\n\ntest -f /var/opt/fuse/bin/setenv && . /var/opt/fuse/bin/setenv' >fuse/bin/setenv && \
     mv fuse/etc /var/opt/fuse/ && \
     sed -i.orig \
         -e 's/\(karaf\.shutdown\.port\.file\)\s*=\s*.*\/\(.*\)/\1 = \/var\/opt\/fuse\/\2/' \
@@ -41,10 +41,7 @@ RUN cd /opt && \
 	/var/opt/fuse/etc/users.properties && \
     chmod 0440 /var/opt/fuse/etc/*.orig && \
     chown -R fuse:fuse /var/opt/fuse && \
-    cp -R maven/conf /home/fuse/.m2 && \
-    chown -R fuse:fuse /home/fuse/.m2 && \
-    sed -i.orig '/<localRepository>\/path\/to\/local\/repo<\/localRepository>/,/\-\->/!b;/\-\->/a <localRepository>\/var\/opt\/fuse\/local<\/localRepository>' /home/fuse/.m2/settings.xml && \
-    chmod 0440 /home/fuse/.m2/settings.xml.orig && \
+    echo "umask 0027" >> /home/fuse/.bashrc && \
     rm -f /tmp/*.*
 
 COPY --chown=fuse:fuse docker-fuse-entrypoint.sh /
@@ -58,8 +55,8 @@ ENV PS1="[\u@\h:\w]\n\$ " \
     KARAF_NOROOT="true" \
     KARAF_OPTS="-Dkaraf.instances=/var/opt/fuse/instances" \
     MAVEN_HOME="/opt/maven" \
-    MAVEN_REPO="/var/opt/fuse/local" \
-    PATH="$PATH:/etc/alternatives/jre_1.8.0_openjdk:/opt/maven/bin:/opt/fuse/bin"
+    MAVEN_REPO="/var/opt/fuse/data/repository" \
+    PATH="$PATH:/etc/alternatives/jre_1.8.0_openjdk:/opt/fuse/bin"
 
 VOLUME /var/opt/fuse
 
@@ -67,10 +64,11 @@ VOLUME /var/opt/fuse
 # 8101 = Karaf shell (SSH)
 # 44444 = Karaf RMI server
 # 1099 = Karaf RMI registry
+# 5005 = Karaf debug
 # 61616 = embedded AMQ connector
-EXPOSE 8181 8101 44444 1099 61616
+EXPOSE 8181 8101 44444 1099 5005 61616
 
 USER fuse
 WORKDIR /var/opt/fuse
-CMD ["/docker-fuse-entrypoint.sh"]
+CMD ["/opt/fuse/bin/fuse"]
 

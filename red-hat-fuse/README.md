@@ -31,7 +31,10 @@ is prohibited from running as ``root``.
 
 All Karaf data has been moved out of the installation directory and into
 */var/opt/fuse* (which is defined as a Docker volume). The local Maven
-repository resides at */var/opt/fuse/local*.
+repository resides at */var/opt/fuse/local*. Additionally, the
+*/opt/fuse/bin/setenv* script has been copied to
+*/var/opt/fuse/bin/setenv* (and the former now sources the latter) so
+that startup behavior may be configured.
 
 The default username and password is admin/admin. *(Note: this account
 left disabled by the default Fuse install, but __enabled__ in this
