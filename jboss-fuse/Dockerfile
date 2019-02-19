@@ -35,6 +35,9 @@ RUN cd /opt && \
     sed -i.orig \
 	-e 's/^#admin=/admin=/' \
 	/var/opt/fuse/etc/users.properties && \
+    sed -i.orig \
+        -e 's/config=file\\:etc\/activemq.xml/config=file\\:${karaf.etc}\/activemq.xml/' \
+	/var/opt/fuse/etc/io.fabric8.mq.fabric.server-broker.cfg && \
     chmod 0440 /var/opt/fuse/etc/*.orig && \
     chown -R fuse:fuse /var/opt/fuse && \
     echo "umask 0027" >> /home/fuse/.bashrc && \
