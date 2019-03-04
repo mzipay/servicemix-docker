@@ -12,50 +12,24 @@ COPY jboss-fuse-karaf-*.zip /tmp/
 RUN cd /opt && \
     unzip /tmp/jboss-fuse-karaf-*.zip && \
     chmod -R g-w,o-rwxXst jboss-fuse-* && \
+    chmod -R u+x,g+x jboss-fuse-*/bin && \
     chown -R fuse:fuse jboss-fuse-* && \
     ln -s jboss-fuse-* fuse && \
-    rm -rf fuse/data fuse/deploy && \
-    mkdir -m 0750 /var/opt/fuse && \
-    mkdir -m 0750 /var/opt/fuse/bin && \
-    mkdir -m 0750 /var/opt/fuse/data && \
-    mkdir -m 0770 /var/opt/fuse/deploy && \
-    cp fuse/bin/setenv /var/opt/fuse/bin/ && \
-    echo -e '#!/bin/sh\n\ntest -f /var/opt/fuse/bin/setenv && . /var/opt/fuse/bin/setenv' >fuse/bin/setenv && \
-    mv fuse/etc /var/opt/fuse/ && \
-    sed -i.orig \
-        -e 's/\(karaf\.shutdown\.port\.file\)\s*=\s*.*\/\(.*\)/\1 = \/var\/opt\/fuse\/\2/' \
-        -e 's/\(karaf\.pid\.file\)\s*=\s*.*\/\(.*\)/\1 = \/var\/opt\/fuse\/\2/' \
-        /var/opt/fuse/etc/config.properties && \
-    sed -i.orig \
-        's/\(felix\.fileinstall\.dir\)\s*=.*/\1 = \/var\/opt\/fuse\/deploy/' \
-        /var/opt/fuse/etc/org.apache.felix.fileinstall-deploy.cfg && \
-    sed -i.orig \
-        '/# karaf.lock.dir=/a karaf.lock.dir = \/var\/opt\/fuse' \
-        /var/opt/fuse/etc/system.properties && \
     sed -i.orig \
 	-e 's/^#admin=/admin=/' \
-	/var/opt/fuse/etc/users.properties && \
-    sed -i.orig \
-        -e 's/config=file\\:etc\/activemq.xml/config=file\\:${karaf.etc}\/activemq.xml/' \
-	/var/opt/fuse/etc/io.fabric8.mq.fabric.server-broker.cfg && \
-    chmod 0440 /var/opt/fuse/etc/*.orig && \
-    chown -R fuse:fuse /var/opt/fuse && \
-    echo "umask 0027" >> /home/fuse/.bashrc && \
+	/opt/fuse/etc/users.properties && \
+    chmod 0440 /opt/fuse/etc/*.orig && \
+    chown -R fuse:fuse /opt/fuse && \
     rm -f /tmp/*.*
 
 ENV PS1="[\u@\h:\w]\n\$ " \
     EDITOR="vi" \
     JAVA_HOME="/etc/alternatives/jre_1.8.0_openjdk" \
     KARAF_HOME="/opt/fuse" \
-    KARAF_DATA="/var/opt/fuse/data" \
-    KARAF_ETC="/var/opt/fuse/etc" \
     KARAF_NOROOT="true" \
-    KARAF_OPTS="-Dkaraf.instances=/var/opt/fuse/instances" \
-    MAVEN_HOME="/opt/maven" \
-    MAVEN_REPO="/var/opt/fuse/data/repository" \
     PATH="$PATH:/etc/alternatives/jre_1.8.0_openjdk:/opt/fuse/bin"
 
-VOLUME /var/opt/fuse
+VOLUME ["/opt/fuse/bin", "/opt/fuse/data", "/opt/fuse/deploy", "/opt/fuse/etc"]
 
 # 8181 = OSGi HTTP service
 # 8101 = Karaf shell (SSH)
@@ -66,6 +40,6 @@ VOLUME /var/opt/fuse
 EXPOSE 8181 8101 44444 1099 5005 61616
 
 USER fuse
-WORKDIR /var/opt/fuse
+WORKDIR /home/fuse
 CMD ["/opt/fuse/bin/fuse"]
 

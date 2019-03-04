@@ -15,12 +15,6 @@ runs Fuse in a **headless** OpenJDK 8 JRE.
 The Fuse installation is located at */opt/fuse* and is owned by
 ``fuse:fuse``. Karaf is prohibited from running as ``root``.
 
-All Karaf data has been moved out of the installation directory and into
-*/var/opt/fuse* (which is defined as a Docker volume). Additionally, the
-*/opt/fuse/bin/setenv* script has been copied to
-*/var/opt/fuse/bin/setenv* (and the former now sources the latter) so
-that startup behavior may be configured.
-
 The default username and password is admin/admin. *(Note: this account
 left disabled by the default Fuse install, but __enabled__ in this
 image.)*
@@ -46,17 +40,20 @@ $ docker build --tag jboss-fuse:6.3.0 .
 ## Run the JBoss Fuse Docker image
 
 Before running the image for the first time, create a Docker *named
-volume* so that Karaf (and embedded AMQ broker) data and configuration
-are persisted between runs:
+volume* for the bin/, data/, deploy/ and etc/ Fuse subdirectories so that
+data and configuration are persisted between runs:
 ```shell
-$ docker volume create jboss-fuse-varopt
+$ docker volume create jboss-fuse-bin
+$ docker volume create jboss-fuse-data
+$ docker volume create jboss-fuse-deploy
+$ docker volume create jboss-fuse-etc
 ```
 
 Run the Fuse instance, daemonized, with the OSGi HTTP port, Karaf SSH
 port, and the embedded AMQ connector port mapped to the loopback
 address:
 ```shell
-$ docker run --name jboss-fuse --rm -dit -p 127.0.0.1:8181:8181 -p 127.0.0.1:8101:8101 -p 127.0.0.1:61616:61616 -v jboss-fuse-varopt:/var/opt/fuse --mount type=tmpfs,destination=/tmp,tmpfs-mode=1777 jboss-fuse:6.3.0
+$ docker run --name jboss-fuse --rm -dit -p 127.0.0.1:8181:8181 -p 127.0.0.1:8101:8101 -p 127.0.0.1:61616:61616 -v jboss-fuse-bin:/opt/fuse/bin -v jboss-fuse-data:/opt/fuse/data -v jboss-fuse-deploy:/opt/fuse/deploy -v jboss-fuse-etc:/opt/fuse/etc --mount type=tmpfs,destination=/tmp,tmpfs-mode=1777 jboss-fuse:6.3.0
 ```
 
 Start a Bash shell as the ``fuse`` user in a running container:
