@@ -7,4 +7,5 @@
 *.tgz
 *.zip
 *KEYS*
-
+/.project
+/.settings/
